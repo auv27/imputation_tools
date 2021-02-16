@@ -7,7 +7,7 @@ pacman::p_load(tidyverse, mice, miceadds)
 df <- data.frame(id = c(1, 2, 3, 4, 5),
                   x = c(46, NA, 23, 24, 47),
                   y = c(NA, 43, 36, 21, 49), 
-                  z = c(16,	28,	36,	NA,	42)) %>%
+                  z = c(16, 28, 36, NA, 42)) %>%
   # if your model will have interactions you should include those in the dataset for imputation
   rowwise() %>%
   mutate(x.y = x*y) %>%
