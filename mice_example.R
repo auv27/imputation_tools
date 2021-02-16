@@ -19,7 +19,7 @@ pred = ini$pred
 pred[,c("id")] = 0
 
 # imputing missing values getting 25 datasets, 50 dataframes within each 
-df_imputed <- mice(df, m=25, maxit = 50, method = 'pmm', seed = 500, pred=pred)
+df_imputed <- mice(df, m = 25, maxit = 50, method = 'pmm', seed = 500, pred=pred)
 summary(df_imputed)
 
 # include all data frames into one - this is useful for visualization purposes
