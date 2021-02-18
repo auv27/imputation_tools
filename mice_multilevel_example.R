@@ -1,7 +1,7 @@
 if (!("pacman" %in% installed.packages()[,])) {
   install.packages("pacman")
 }
-pacman::p_load(tidyverse, mice, miceadds, lme4, lmerTest, optimx)
+pacman::p_load(tidyverse, mice, miceadds, lme4, lmerTest, broom.mixed)
 
 # data.frame with missing data example
 df <- data.frame(id = c(1, 2, 3, 4, 5),
@@ -41,6 +41,6 @@ df_imputed2 <- lapply(1:25, function(i) complete(df_imputed, action = i))
 df_imputed_complete <- datalist2mids(df_imputed2) 
 
 # example model
-m <- with(df_imputed, lmer(value ~ x*type + (1 | id))) 
-pool(m)
-summary(est)
+## lmerTest provides p-values
+m <- with(df_imputed, lmerTest::lmer(value ~ x*type + (1 | id))) 
+summary(est <- pool(m))
