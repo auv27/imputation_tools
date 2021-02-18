@@ -6,19 +6,18 @@ pacman::p_load(tidyverse, mice, miceadds)
 # data.frame with missing data example
 df <- data.frame(id = c(1, 2, 3, 4, 5),
                  x = c(46, NA, 23, 24, 47),
-                 y = c(NA, 43, 36, 21, 49), 
-                 z1 = c(16, 28, 36, NA, 42),
-                 z2 = c(33, 45, NA, 16, 2),
-                 z3 = c(34, 18, 39, 4, NA)) %>%
-  # if your model will have interactions you should include those in the dataset for imputation
-  mutate(x = scale(x, center = TRUE, scale = FALSE),
-         y = scale(y, center = TRUE, scale = FALSE),
-         across(c("x", "y"), .fns = as.numeric)) %>%
-  rowwise() %>%
-  mutate(x.y = x*y) %>%
-  as.data.frame() %>%
+                 y1 = c(16, 28, 36, NA, 42),
+                 y2 = c(33, 45, NA, 16, 2),
+                 y3 = c(34, 18, 39, 4, NA)) %>%
   # you will want your data in a long format if it isn't already
-  pivot_longer(., cols = 4:6, names_to = "type", values_to = "value")
+  pivot_longer(., cols = 3:5, names_to = "type", values_to = "value") %>%
+  # if your model will have interactions you should include those in the dataset for imputation
+  mutate(x = as.numeric(scale(x, center = TRUE, scale = FALSE)),
+         type = as.numeric(gsub("[^0-9.-]", "", type))) %>%
+  rowwise() %>%
+  mutate(x.y = x*type,
+         type = as.factor(type)) %>%
+  as.data.frame() 
 
 # set id as a grouping variable 
 ini <- mice(df, maxit = 0, pri = FALSE)
@@ -27,8 +26,8 @@ pred[,c("id")] -2
 
 # set multilevel imputation method
 meth <- ini$meth
-meth[c("value")] <- "2l.norm"
-meth[c("x", "y", "x.y")] <- "pmm"
+meth[c("value", "x", "x.y")] <- "2l.norm"
+#meth[c("x", "y", "x.y")] <- "pmm"
 meth[c("type")] <- ""
 
 # imputing missing values getting 25 datasets, 50 dataframes within each 
