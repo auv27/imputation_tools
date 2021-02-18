@@ -16,7 +16,8 @@ df <- data.frame(id = c(1, 2, 3, 4, 5),
   mutate(x = as.numeric(scale(x, center = TRUE, scale = FALSE)),
          type = as.numeric(gsub("[^0-9.-]", "", type))) %>%
   rowwise() %>%
-  mutate(x.y = x*type) %>%
+  mutate(x.y = x*type,
+         type = as.factor(type)) %>%
   as.data.frame() 
 
 # set id as a grouping variable 
