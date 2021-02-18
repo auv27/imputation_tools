@@ -10,9 +10,9 @@ df <- data.frame(id = c(1, 2, 3, 4, 5),
                   z = c(16, 28, 36, NA, 42)) %>%
   # if your model will have interactions you should include those in the dataset for imputation
   mutate(x = scale(x, center = TRUE, scale = FALSE),
-         y = scale(y, center = TRUE, scale = FALSE))
+         y = scale(y, center = TRUE, scale = FALSE)) %>%
   rowwise() %>%
-  mutate(x.y = x.c*y.c) %>%
+  mutate(x.y = x*y) %>%
   as.data.frame()
 
 # remove id so it doesn't play a role in the imputation process 
