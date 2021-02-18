@@ -12,20 +12,27 @@ df <- data.frame(id = c(1, 2, 3, 4, 5),
                  z3 = c(34, 18, 39, 4, NA)) %>%
   # if your model will have interactions you should include those in the dataset for imputation
   mutate(x = scale(x, center = TRUE, scale = FALSE),
-         y = scale(y, center = TRUE, scale = FALSE)) %>%
+         y = scale(y, center = TRUE, scale = FALSE),
+         across(c("x", "y"), .fns = as.numeric)) %>%
   rowwise() %>%
-  mutate(x.y = x.c*y.c) %>%
-  as.data.frame()
+  mutate(x.y = x*y) %>%
+  as.data.frame() %>%
   # you will want your data in a long format if it isn't already
   pivot_longer(., cols = 4:6, names_to = "type", values_to = "value")
 
-# remove id so it doesn't play a role in the imputation process 
-ini = mice(df, maxit=0, pri=F)
-pred = ini$pred
-pred[,c("id")] = 0
+# set id as a grouping variable 
+ini <- mice(df, maxit = 0, pri = FALSE)
+pred <- ini$pred
+pred[,c("id")] -2
+
+# set multilevel imputation method
+meth <- ini$meth
+meth[c("value")] <- "2l.norm"
+meth[c("x", "y", "x.y")] <- "pmm"
+meth[c("type")] <- ""
 
 # imputing missing values getting 25 datasets, 50 dataframes within each 
-df_imputed <- mice(df, m = 25, maxit = 50, method = 'pmm', seed = 500, pred=pred)
+df_imputed <- mice(df, m = 25, maxit = 50, method = meth, seed = 500, pred=pred)
 summary(df_imputed)
 
 # include all data frames into one - this is useful for visualization purposes

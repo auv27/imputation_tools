@@ -10,14 +10,15 @@ df <- data.frame(id = c(1, 2, 3, 4, 5),
                   z = c(16, 28, 36, NA, 42)) %>%
   # if your model will have interactions you should include those in the dataset for imputation
   mutate(x = scale(x, center = TRUE, scale = FALSE),
-         y = scale(y, center = TRUE, scale = FALSE)) %>%
+         y = scale(y, center = TRUE, scale = FALSE),
+         across(c("x", "y"), .fns = as.numeric)) %>%
   rowwise() %>%
   mutate(x.y = x*y) %>%
   as.data.frame()
 
 # remove id so it doesn't play a role in the imputation process 
-ini = mice(df, maxit=0, pri=F)
-pred = ini$pred
+ini <- mice(df, maxit = 0, pri = FALSE)
+pred <- ini$pred
 pred[,c("id")] = 0
 
 # imputing missing values getting 25 datasets, 50 dataframes within each 
