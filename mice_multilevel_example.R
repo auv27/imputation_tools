@@ -36,7 +36,7 @@ df_imputed <- mice(df, m = 25, maxit = 50, method = meth, seed = 500, pred=pred)
 summary(df_imputed)
 
 # include all data frames into one - this is useful for visualization purposes
-## do not be misled and use the complete alone as it will actually only give you one dataset
+## do not be misled and use the complete function alone as it will actually only give you one dataset
 df_imputed2 <- lapply(1:25, function(i) complete(df_imputed, action = i))
 df_imputed_complete <- datalist2mids(df_imputed2) 
 
